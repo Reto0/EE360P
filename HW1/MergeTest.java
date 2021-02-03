@@ -18,7 +18,7 @@ public class MergeTest {
     printArray(A);
     System.out.println("Verify Merge for array B: ");
     printArray(B);
-    // PMerge.parallelMerge(A,B,C,6);
+    PMerge.parallelMerge(A,B,C,6);
     
     printArray(C);
 
