@@ -21,7 +21,8 @@ public class PMerge{
         pool.execute(rb);
     }
     pool.shutdown();
-    while(!pool.isTerminated()){}
+    try {pool.awaitTermination(1, TimeUnit.MINUTES);} 
+    catch (InterruptedException e) {e.printStackTrace();}
     C = cArray;
   }
   public static class search implements Runnable{
@@ -44,7 +45,6 @@ public class PMerge{
                 if(Aarray)
                     mid++;
                 cArray[index+mid] = num;
-                // System.out.println("inserting " + num + "at index: " + index+mid);
                 return;
             }
             else if ( num < arr[mid])
@@ -53,7 +53,6 @@ public class PMerge{
                 l = mid + 1;
         }
         cArray[index+l] = num;
-        // System.out.println("inserting " + num + "at index: " + (index+l));
       }
   }
 }
