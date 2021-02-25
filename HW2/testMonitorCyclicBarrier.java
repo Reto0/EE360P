@@ -1,5 +1,7 @@
+
+
 public class testMonitorCyclicBarrier implements Runnable {
-	final static int SIZE = 7;
+	final static int SIZE = 15;
 	final static int ROUND = 5;
 	
 	final MonitorCyclicBarrier gate;

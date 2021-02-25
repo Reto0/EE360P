@@ -1,5 +1,5 @@
 public class testCyclicBarrier implements Runnable {
-	final static int SIZE = 5;
+	final static int SIZE = 15;
 	final static int ROUND = 5;
 	
 	final CyclicBarrier gate;
