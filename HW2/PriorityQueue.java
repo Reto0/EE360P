@@ -47,6 +47,7 @@ public class PriorityQueue {
             Node newNode = new Node(name, priority);
         
             lock.lock();    //lock needed for if list is empty and two threads trying to create a node at head
+            current = head;
             if(head == null){
                 head = newNode;
                 lock.unlock();
@@ -89,10 +90,10 @@ public class PriorityQueue {
         }
         finally{
             //guarantee locks are unlocked
-            if(lock.isLocked())
+            if(lock.isHeldByCurrentThread())
                 lock.unlock();
             if(current != null)
-                if(current.lock.isLocked())
+                if(current.lock.isHeldByCurrentThread())
                     current.lock.unlock();
         }
 	}
@@ -104,11 +105,13 @@ public class PriorityQueue {
         //iterate till null
         //if found ret position else ret -1
         //no locks needed because we want the position when this is called
+        
         Node current = head;
         // try{
             if(current == null)
                 return -1;
             // current.lock.lock();
+            // System.out.println("Searching for: " + name + " current head is: " + head.name);
             int position = 0;
             while(current.next != null){
                 if(current.name.equals(name)){
@@ -134,35 +137,34 @@ public class PriorityQueue {
         // or blocks the thread if the list is empty.
         Node temp = new Node("",9);
         try{
-            lock2.lock();   //lock needed for when when threads are woken only one proceeds as two cannot get the first element if only one is inserted
-            //different lock used so it doesnt block other threads that call lock.lock()
+            lock.lock();
             while(spaceAvail.get() == maxSize){
+                
                 try {
-                    lock.lock();
 					notEmpty.await();
-                    lock.unlock();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+                
             }
-            lock2.unlock();
+            
             head.lock.lock();
             temp = head;
             String name = head.name;
+            head.lock.unlock();
             head = head.next;
             spaceAvail.incrementAndGet();
-            lock.lock();
             notFull.signalAll();
             lock.unlock();
             return name;
         }
         finally{
-            if(lock2.isLocked())
-                lock2.unlock();
-            if(lock.isLocked())
+            // if(lock2.isHeldByCurrentThread())
+            //     lock2.unlock();
+            if(lock.isHeldByCurrentThread())
                 lock.unlock();
-            if(temp.lock.isLocked())
+            if(temp.lock.isHeldByCurrentThread())
                 temp.lock.unlock();
         }
 	}
